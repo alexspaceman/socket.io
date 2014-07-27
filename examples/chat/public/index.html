@@ -30,7 +30,8 @@
               class="space {{cell.idNum}} {{cell.colorStatus}} {{cell.boardCornerSide}} {{cell.mouseOverStatus}} {{cell.lastMoveStatus}}"
               ng-mouseenter="cell.mouseOverStatus = 'mouseOver'" 
               ng-mouseleave="cell.mouseOverStatus = ''"
-              ng-mouseup="mouseUpFunction(cell, $parent.$index, $index)">
+              ng-mouseup="emitMouseUp(cell);
+                          mouseUpFunction(cell, $parent.$index, $index)">
                 <div>ID:{{cell.idNum}}</div>
                 <div>{{cell.cellRow}} - {{cell.cellCol}}</div>
               </span>

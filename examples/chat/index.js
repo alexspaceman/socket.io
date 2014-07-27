@@ -80,4 +80,9 @@ io.on('connection', function (socket) {
   socket.on('clicked', function () {
     socket.broadcast.emit('clicked');
   });
+
+  socket.on('emitMouseUp', function (cell) {
+    console.log(cell);
+    socket.broadcast.emit('emitMouseUp', cell);
+  });
 });

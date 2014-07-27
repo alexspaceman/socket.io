@@ -1,4 +1,5 @@
 var app = angular.module('app', []);
+var socket = io();
 
 app.controller('GoBoardController', function($scope){
 
@@ -26,15 +27,18 @@ app.controller('GoBoardController', function($scope){
 		coloredCheckedPieces: []
 	}
 
-//NIGHTLY EMISSIONS
-/*	socket.emit('clicked');
+//EMIT MOUSE UP EVENT
+	$scope.emitMouseUp = function(cell){
+		console.log(cell);
+		socket.emit('emitMouseUp', cell);
+	}
 
-	socket.on('clicked', function (data) {
-		clicked(data);
+	socket.on('emitMouseUp', function (cell){
+		console.log(cell);
+		$scope.mouseUpFunction(cell, cell.cellRow, cell.cellCol);
 	});
-*/
-	var socket = io();
 
+//NIGHTLY EMISSIONS
 	$scope.talk = function () {
 		socket.emit('clicked');
 	}
@@ -243,7 +247,6 @@ app.controller('GoBoardController', function($scope){
 //NOW THE AUTO COUNTER WILL WORK JUST FINE
 
 
-
 //MOUSE UP EVENT
 	$scope.mouseUpFunction = function(cell, row, col){
 		if(cell.colorStatus == 'emptySpot'){
@@ -263,6 +266,7 @@ app.controller('GoBoardController', function($scope){
 				$scope.globalVar.idsTakenThisTurn = [];			//reset the idsTakenThisTurn
 				resetCheckedStatus($scope.goBoard);
 				resetToTakeStatus($scope.goBoard);
+
 
 				$scope.globalVar.turnColor = getTurnColor($scope.globalVar.turnNumber, cell, $scope.globalVar.turnColor);
 				
