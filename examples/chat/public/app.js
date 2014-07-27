@@ -28,25 +28,52 @@ app.controller('GoBoardController', function($scope){
 	}
 
 //EMIT MOUSE UP EVENT
-	$scope.emitMouseUp = function(cell){
-		console.log(cell);
-		socket.emit('emitMouseUp', cell);
+	$scope.emitMouseUp = function(row, col){
+		socket.emit('emitMouseUp', {
+			row: row,
+			col: col
+		});
 	}
 
-	socket.on('emitMouseUp', function (cell){
-		console.log(cell);
-		$scope.mouseUpFunction(cell, cell.cellRow, cell.cellCol);
+	socket.on('emitMouseUp', function (data){
+		$scope.$apply(function(){
+			$scope.mouseUpFunction($scope.goBoard[data.row][data.col], data.row, data.col);
+		});
 	});
 
-//NIGHTLY EMISSIONS
-	$scope.talk = function () {
-		socket.emit('clicked');
+//EMIT PASS BUTTON
+	$scope.emitPass = function(){
+		socket.emit('emitPass');
 	}
 
-	socket.on('clicked', function (){
-		alert('other guy clicked talk');
+	socket.on('emitPass', function (){
+		$scope.$apply(function() {
+			$scope.pass();
+		});
 	});
 
+
+//EMIT BACK BUTTON
+	$scope.emitBack = function(){
+		socket.emit('emitBack');
+	}
+	socket.on('emitBack', function (){
+		$scope.$apply(function() {
+			$scope.goBack();
+		});
+	});
+
+
+//EMIT RESET BUTTON
+	$scope.emitReset = function(){
+		socket.emit('emitReset');
+	}
+	socket.on('emitReset', function (){
+		$scope.$apply(function() {
+			$scope.resetBoard();
+		});
+	});
+	
 //PASS EVENT
 	$scope.pass = function () {
 		$scope.globalVar.turnColor = oppositeTurnColor($scope.globalVar.turnColor);
@@ -592,12 +619,12 @@ app.controller('GoBoardController', function($scope){
 //GET TURN COLOR
 	function getTurnColor(turnNumber, cell, turnColor){
 		if(turnNumber % 2 == 1){
-			cell.colorStatus = 'black';
-			turnColor = 'white';
-		}else{
-			cell.colorStatus = 'white';
-			turnColor = 'black';
-		}
+				cell.colorStatus = 'black';
+				turnColor = 'white';
+			}else{
+				cell.colorStatus = 'white';
+				turnColor = 'black';
+			}
 		return turnColor;
 	}
 

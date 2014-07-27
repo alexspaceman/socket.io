@@ -77,12 +77,26 @@ io.on('connection', function (socket) {
     }
   });
 
-  socket.on('clicked', function () {
-    socket.broadcast.emit('clicked');
+  socket.on('emitPass', function () {
+    console.log(socket.username + 'pass');
+    socket.broadcast.emit('emitPass');
   });
 
-  socket.on('emitMouseUp', function (cell) {
-    console.log(cell);
-    socket.broadcast.emit('emitMouseUp', cell);
+  socket.on('emitBack', function () {
+    console.log(socket.username + 'back');
+    socket.broadcast.emit('emitBack');
+  });
+
+  socket.on('emitReset', function () {
+    console.log(socket.username + 'reset');
+    socket.broadcast.emit('emitReset');
+  });
+
+  socket.on('emitMouseUp', function (data) {
+    console.log(data);
+    socket.broadcast.emit('emitMouseUp', {
+      row: data.row,
+      col: data.col
+    });
   });
 });

@@ -17,9 +17,9 @@
           <h5>TURN # {{globalVar.turnNumber}} : {{globalVar.turnColor}}</h5>
           <h5>***SCORE*** B:{{globalVar.blackScore}}  W:{{globalVar.whiteScore}}</h5>
 
-          <input type="button" value="pass" ng-click="pass()">
-          <input type="button" value="back" ng-click="goBack()">
-          <input type="button" value="reset" ng-click="resetBoard()">
+          <input type="button" value="pass" ng-click="emitPass(); pass()">
+          <input type="button" value="back" ng-click="emitBack(); goBack()">
+          <input type="button" value="reset" ng-click="emitReset(); resetBoard()">
           <input type="button" value="talk" ng-click="talk()">
         </div>
 
@@ -30,7 +30,7 @@
               class="space {{cell.idNum}} {{cell.colorStatus}} {{cell.boardCornerSide}} {{cell.mouseOverStatus}} {{cell.lastMoveStatus}}"
               ng-mouseenter="cell.mouseOverStatus = 'mouseOver'" 
               ng-mouseleave="cell.mouseOverStatus = ''"
-              ng-mouseup="emitMouseUp(cell);
+              ng-mouseup="emitMouseUp($parent.$index, $index);
                           mouseUpFunction(cell, $parent.$index, $index)">
                 <div>ID:{{cell.idNum}}</div>
                 <div>{{cell.cellRow}} - {{cell.cellCol}}</div>
