@@ -1,0 +1,62 @@
+.space {
+    display: inline-block;
+    cursor: pointer;
+    margin: 5px;
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    border-radius: 50%;
+}
+
+.lastMove {
+    box-shadow:inset 0px 0px 0px 2px #99CCFF !important;
+}
+
+.mouseOver {
+	background-color: #B2FF99 !important;
+}
+
+.white {
+	background-color: #EDEDED !important;
+}
+ 
+.black {
+	background-color: #585851 !important;
+}
+
+.empty {
+	background-color: #EBD699;
+}
+
+div.board {
+	padding: 0px;
+	border-width: 20px;
+	border-style: solid;
+	border-color: #D68533;
+	background-color: #EBD699;
+	display: inline-block;
+}
+
+body {
+	background-color: #A37547;
+}
+
+.checkedList {
+	box-shadow:inset 0px 0px 0px 2px #33D633;
+}
+
+.enemyChain1 {
+	box-shadow:inset 0px 0px 0px 2px #FF4719;
+}
+
+.enemyChain2 {
+	box-shadow:inset 0px 0px 0px 2px #FFD119;
+}
+
+.enemyChain3 {
+	box-shadow:inset 0px 0px 0px 2px #B2FF99;
+}
+
+.enemyChain4 {
+	box-shadow:inset 0px 0px 0px 2px #FF4719;
+}

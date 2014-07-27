@@ -76,4 +76,8 @@ io.on('connection', function (socket) {
       });
     }
   });
+
+  socket.on('clicked', function () {
+    socket.broadcast.emit('clicked');
+  });
 });

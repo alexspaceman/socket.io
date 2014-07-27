@@ -1,18 +1,49 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" ng-app="app">
 <head>
   <meta charset="UTF-8">
   <title>Socket.IO Chat Example</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" type="text/css" href="common.css">
+  <script src="/angular.min.js"></script>
 </head>
 <body>
   <ul class="pages">
     <li class="chat page">
+      <div class="goBoard">
+        <div ng-controller="GoBoardController">
+
+        <div class="hud">
+          <h5>TURN # {{globalVar.turnNumber}} : {{globalVar.turnColor}}</h5>
+          <h5>***SCORE*** B:{{globalVar.blackScore}}  W:{{globalVar.whiteScore}}</h5>
+
+          <input type="button" value="pass" ng-click="pass()">
+          <input type="button" value="back" ng-click="goBack()">
+          <input type="button" value="reset" ng-click="resetBoard()">
+          <input type="button" value="talk" ng-click="talk()">
+        </div>
+
+          <div class="board">
+            <div ng-repeat="row in goBoard">
+              <span ng-repeat="cell in row" 
+              id="{{cell.idNum}}" 
+              class="space {{cell.idNum}} {{cell.colorStatus}} {{cell.boardCornerSide}} {{cell.mouseOverStatus}} {{cell.lastMoveStatus}}"
+              ng-mouseenter="cell.mouseOverStatus = 'mouseOver'" 
+              ng-mouseleave="cell.mouseOverStatus = ''"
+              ng-mouseup="mouseUpFunction(cell, $parent.$index, $index)">
+                <div>ID:{{cell.idNum}}</div>
+                <div>{{cell.cellRow}} - {{cell.cellCol}}</div>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="chatArea">
         <ul class="messages"></ul>
       </div>
       <input class="inputMessage" placeholder="Type here..."/>
     </li>
+
     <li class="login page">
       <div class="form">
         <h3 class="title">What's your nickname?</h3>
@@ -24,5 +55,7 @@
   <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/main.js"></script>
+  <script src="/app.js"></script>
+  <link href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 </body>
 </html>
