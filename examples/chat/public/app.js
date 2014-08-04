@@ -5,7 +5,7 @@ app.controller('GoBoardController', function($scope){
 
 //GLOBAL VARIABLES
 	$scope.globalVar = {
-		boardLength: 6,				//GLOBAL set boardLength
+		boardLength: 9,				//GLOBAL set boardLength
 		turnNumber: 1,				//turn counter(used to switch player)
 		turnColor: 'black',
 		oppositeTurnColor: 'white',
@@ -83,92 +83,96 @@ app.controller('GoBoardController', function($scope){
 		$scope.globalVar.turnHistory = saveBoardState($scope.goBoard, $scope.globalVar.turnHistory);
 
 		if($scope.globalVar.passCounter == 2){
-			alert('BOTH PLAYERS PASS' + '\n' + 'count your territory and add it to your score'+ '\n' +
-				'autoCounter WORK IN PROGRESS');
+			alert('BOTH PLAYERS PASS' + '\n' + 'counting player territories');
 			resetCheckedStatus($scope.goBoard);		//might not be necessary
+			$scope.globalVar.pointsAddedCounter = 0;
+
 			territoryCounter();
 		}
 	}
 
-//TERRITORY COUNTER FUNCTION
+//TERRITORY COUNTER FUNCTIONS
 	function territoryCounter(){
-		alert('territoryCounter()');
 		for(var i = 0; i < $scope.goBoard.length; i++){
 			for(var j = 0; j < $scope.goBoard[i].length ; j++){
-				if($scope.goBoard[i][j].checkedStatus == false){
-					$scope.goBoard[i][j].checkedStatus = true;
-					if($scope.goBoard[i][j].colorStatus == 'emptySpot'){
-						$scope.globalVar.pointsAddedCounter = 1;	//reset the counter, but add a point
-						checkTerritory($scope.goBoard[i][j], $scope.globalVar.boardLength);
-					}else{				//reset counter when you hit black or white. may not be necessary
-						$scope.globalVar.pointsAddedCounter = 0;
-						($scope.globalVar.coloredCheckedPieces).push($scope.goBoard[i][j]);
+				var cell = $scope.goBoard[i][j];
+				blackCounterFlag = false;
+				whiteCounterFlag = false;
+				$scope.globalVar.pointsAddedCounter = 0;
+
+				console.log('idNum: ' + cell.idNum);
+
+				if(cell.colorStatus == 'white' || cell.colorStatus == 'black'){
+					cell.checkedStatus = false;
+				}
+
+				if(cell.checkedStatus == false){
+					if(cell.colorStatus == 'emptySpot'){
+						console.log('emptySpot');
+						$scope.globalVar.pointsAddedCounter++;
+
+						checkLegalNeighbours(cell);
+
+					}else if(cell.colorStatus == 'black'){
+						console.log('black');
+					}else if(cell.colorStatus == 'white'){
+						console.log('white');
 					}
-				}else{	//NOT TRIGGERING ALL THE TIME
-					alert('DONEZO  - pointsAddedCounter: ' + $scope.globalVar.pointsAddedCounter);
-					if($scope.globalVar.blackCounterFlag == true && $scope.globalVar.whiteCounterFlag == true){
-						alert('no points for this emptySpot chain');
-					}else if($scope.globalVar.blackCounterFlag == true && $scope.globalVar.whiteCounterFlag == false){
-						alert('points for black!' + $scope.globalVar.pointsAddedCounter);
+
+					if(blackCounterFlag == true && whiteCounterFlag == true){
+						console.log('no mans turf');
+					}else if(blackCounterFlag == true && whiteCounterFlag == false){
+						console.log('black turf' + '\n' + $scope.globalVar.pointsAddedCounter
+							+ ' points added to black');
+						alert('+' + $scope.globalVar.pointsAddedCounter + ' to black');
 						$scope.globalVar.blackScore += $scope.globalVar.pointsAddedCounter;
-					}else if($scope.globalVar.blackCounterFlag == false && $scope.globalVar.whiteCounterFlag == true){
-						alert('points for white!' + $scope.globalVar.pointsAddedCounter);
+					}else if(blackCounterFlag == false && whiteCounterFlag == true){
+						console.log('white turf' + '\n' + $scope.globalVar.pointsAddedCounter
+							+ ' points added to white');
+						alert('+' + $scope.globalVar.pointsAddedCounter + ' to white');
 						$scope.globalVar.whiteScore += $scope.globalVar.pointsAddedCounter;
-					}else if($scope.globalVar.blackCounterFlag == false && $scope.globalVar.whiteCounterFlag == false){
-						alert('no points for this emptySpot chain');
+					}else if(blackCounterFlag == false && whiteCounterFlag == false){
+						console.log('no points');
 					}
-
-					for(var k = 0; k < $scope.globalVar.coloredCheckedPieces.length; k++){
-						alert($scope.globalVar.coloredCheckedPieces[k].colorStatus);
-						$scope.globalVar.coloredCheckedPieces[k].checkedStatus = false;
-					}
-					$scope.globalVar.coloredCheckedPieces = [];
-
-					$scope.globalVar.pointsAddedCounter = 0;
-					$scope.globalVar.blackCounterFlag = false;
-					$scope.globalVar.whiteCounterFlag = false;
-
 				}
 			}
 		}
 	}
 
-//TERRITORY CHECKERS AND RECURSIONS
-	function checkTerritory(cell, boardLength){
-		alert('checkTerritory()');
-		alert($scope.globalVar.pointsAddedCounter);
-
-		if(cell.cellRow > 1){
-			var focusPiece = $scope.goBoard[(cell.cellRow-2)][cell.cellCol-1];
-			territoryCheckRecursion(focusPiece, cell, boardLength);
-		}
-		if(cell.cellCol > 1){
-			var focusPiece = $scope.goBoard[(cell.cellRow-1)][cell.cellCol-2];
-			territoryCheckRecursion(focusPiece, cell, boardLength);
-		}
-		if(cell.cellCol < boardLength){
-			var focusPiece = $scope.goBoard[(cell.cellRow-1)][cell.cellCol];
-			territoryCheckRecursion(focusPiece, cell, boardLength);
-		}
-		if(cell.cellRow < boardLength){
-			var focusPiece = $scope.goBoard[(cell.cellRow)][cell.cellCol-1];
-			territoryCheckRecursion(focusPiece, cell, boardLength);
+	function checkLegalNeighbours(cell){
+		if(cell.checkedStatus == false){
+			cell.checkedStatus = true;
+			if(cell.cellRow > 1){
+				var focusPiece = $scope.goBoard[(cell.cellRow-2)][cell.cellCol-1];
+				checkForEmpties(focusPiece, cell);
+			}
+			if(cell.cellCol > 1){
+				var focusPiece = $scope.goBoard[(cell.cellRow-1)][cell.cellCol-2];
+				checkForEmpties(focusPiece, cell);
+			}
+			if(cell.cellCol < $scope.globalVar.boardLength){
+				var focusPiece = $scope.goBoard[(cell.cellRow-1)][cell.cellCol];
+				checkForEmpties(focusPiece, cell);
+			}
+			if(cell.cellRow < $scope.globalVar.boardLength){
+				var focusPiece = $scope.goBoard[(cell.cellRow)][cell.cellCol-1];
+				checkForEmpties(focusPiece, cell);
+			}
 		}
 	}
 
-	function territoryCheckRecursion(focusPiece, cell, boardLength){
-		alert('should be checking ' + cell.idNum + '\n' + 'and focusing on ' + focusPiece.idNum + '\n' +
-			'cell.colorStatus: ' + cell.colorStatus + '\n' + 'focusPiece.colorStatus: ' + focusPiece.colorStatus);
+	function checkForEmpties(focusPiece, cell){
+		console.log('cell.idNum: ' + cell.idNum + '\n' + 'focusPiece.idNum: ' + focusPiece.idNum);
+		cell.checkedStatus = true;
 		if(focusPiece.checkedStatus == false){
-			focusPiece.checkedStatus = true;
-			if(focusPiece.colorStatus == 'black'){
-				$scope.globalVar.blackCounterFlag = true;
-				($scope.globalVar.coloredCheckedPieces).push(focusPiece);
+			if(focusPiece.colorStatus == 'emptySpot'){
+				console.log('trigger recursive check');
+				$scope.globalVar.pointsAddedCounter++;
+				checkLegalNeighbours(focusPiece);
+			}else if(focusPiece.colorStatus == 'black'){
+				blackCounterFlag = true;
 			}else if(focusPiece.colorStatus == 'white'){
-				$scope.globalVar.whiteCounterFlag = true;
-				($scope.globalVar.coloredCheckedPieces).push(focusPiece);
-			}else{
-				checkTerritory(focusPiece, boardLength);
+				whiteCounterFlag = true;
 			}
 		}
 	}
